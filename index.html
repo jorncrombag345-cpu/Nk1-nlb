@@ -1,66 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kickboxing Matchmaker</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
 body{
-    font-family: Arial;
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
+    margin:0;
+    font-family: Inter, Arial;
+    background: radial-gradient(circle at top, #1a1a1a, #000);
+    color:white;
 }
 
-button{
-    padding: 10px;
-    background: black;
-    color: white;
-    border: none;
-    cursor: pointer;
+/* HEADER */
+header{
+    text-align:center;
+    padding:40px 20px;
+}
+
+header h1{
+    font-size:40px;
+    margin:0;
+    background: linear-gradient(90deg, #ff3c3c, #ff9a3c);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+header p{
+    opacity:0.7;
+}
+
+/* CONTAINER */
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+/* FORM CARD */
+.card{
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
 input{
-    padding: 8px;
-    margin-bottom: 10px;
-    width: 100%;
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,0.1);
+    color:white;
 }
 
-.fighter{
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 10px;
+input::placeholder{
+    color:rgba(255,255,255,0.5);
 }
-</style>
-</head>
 
-<body>
-
-<h1>Kickboxing Matchmaker</h1>
-<p>Zoek tegenstanders voor jouw gala of vechter.</p>
-
-<h2>Vechter aanmelden</h2>
-
-<form id="fighterForm">
-    <input type="text" placeholder="Naam" id="naam" required>
-    <input type="text" placeholder="Gewichtsklasse" id="gewicht" required>
-    <input type="text" placeholder="Record (bijv. 3-1)" id="record" required>
-    <button type="submit">Versturen</button>
-</form>
-
-<h2>Aangemelde vechters</h2>
-<div id="lijst"></div>
-
-<script>
-// opslag laden of lege array maken
-let fighters = JSON.parse(localStorage.getItem("fighters")) || [];
-
-// tonen op pagina
-function renderFighters() {
-    const lijst = document.getElementById("lijst");
-    lijst.innerHTML = "";
-
-    fighters.forEach((f, index) => {
-        lijst.innerHTML += `
-            <div class="fighter">
-                <strong>${f.naam}</strong><br
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background: linear-gradient(90deg, #ff3c3c, #ff9a3c);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
