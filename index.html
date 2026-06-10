@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kickboxing Matchmaker Admin</title>
+<title>Kickboxing Matchmaker</title>
 
 <style>
 body{
+    margin:0;
+    padding:20px;
     font-family:Arial,sans-serif;
     background:#111;
     color:white;
-    margin:0;
-    padding:20px;
 }
 
 h1{
@@ -35,18 +35,23 @@ input, select{
 button{
     width:100%;
     padding:10px;
-    background:#d32f2f;
+    margin-top:5px;
+    background:#e53935;
     color:white;
     border:none;
     border-radius:5px;
     cursor:pointer;
 }
 
+button:hover{
+    opacity:0.9;
+}
+
 .item{
     background:#333;
     padding:10px;
+    margin-top:8px;
     border-radius:5px;
-    margin-top:5px;
 }
 </style>
 </head>
@@ -56,29 +61,51 @@ button{
 
 <div class="card">
     <h2>Admin Login</h2>
-    <input type="password" id="adminPassword" placeholder="Admin wachtwoord">
-    <button onclick="loginAdmin()">Login</button>
-    <p id="loginStatus">Niet ingelogd</p>
+
+    <input
+        type="password"
+        id="adminPassword"
+        placeholder="Admin wachtwoord">
+
+    <button onclick="loginAdmin()">
+        Login
+    </button>
+
+    <p id="loginStatus">
+        Niet ingelogd
+    </p>
 </div>
 
 <div class="card">
     <h2>Trainer: Vechter toevoegen</h2>
 
     <input id="voornaam" placeholder="Voornaam">
+
     <input id="achternaam" placeholder="Achternaam">
-    <input id="gewicht" type="number" placeholder="Gewicht (kg)">
-    <input id="record" placeholder="Record (bijv. 10-2)">
 
-    <button onclick="addFighter()">Vechter toevoegen</button>
+    <input
+        id="gewicht"
+        type="number"
+        placeholder="Gewicht (kg)">
+
+    <input
+        id="record"
+        placeholder="Record (bijv. 8-2)">
+
+    <button onclick="addFighter()">
+        Vechter toevoegen
+    </button>
 </div>
 
 <div class="card">
-    <h2>Alle Vechters</h2>
-    <div id="fighterList"></div>
+    <h2>Vechters</h2>
+    <div id="fighterList">
+        Nog geen vechters
+    </div>
 </div>
 
 <div class="card">
-    <h2>Admin: Maak Match</h2>
+    <h2>Admin: Match maken</h2>
 
     <select id="fighterA"></select>
 
@@ -90,12 +117,16 @@ button{
         <option>Geannuleerd</option>
     </select>
 
-    <button onclick="createMatch()">Match aanmaken</button>
+    <button onclick="createMatch()">
+        Maak wedstrijd
+    </button>
 </div>
 
 <div class="card">
     <h2>Wedstrijden</h2>
-    <div id="matchList"></div>
+    <div id="matchList">
+        Nog geen wedstrijden
+    </div>
 </div>
 
 <script>
@@ -108,32 +139,49 @@ let matches = [];
 
 function loginAdmin(){
 
-    let password =
-        document.getElementById("adminPassword").value;
+    let pass =
+        document.getElementById(
+            "adminPassword"
+        ).value;
 
-    if(password === "admin123"){
+    if(pass === "admin123"){
+
         admin = true;
 
-        document.getElementById("loginStatus")
-        .innerHTML = "✅ Admin ingelogd";
+        document.getElementById(
+            "loginStatus"
+        ).innerHTML =
+        "✅ Admin ingelogd";
+
     }else{
-        alert("Verkeerd wachtwoord");
+
+        alert(
+            "Verkeerd wachtwoord"
+        );
     }
 }
 
 function addFighter(){
 
     let voornaam =
-        document.getElementById("voornaam").value.trim();
+        document.getElementById(
+            "voornaam"
+        ).value.trim();
 
     let achternaam =
-        document.getElementById("achternaam").value.trim();
+        document.getElementById(
+            "achternaam"
+        ).value.trim();
 
     let gewicht =
-        document.getElementById("gewicht").value;
+        document.getElementById(
+            "gewicht"
+        ).value;
 
     let record =
-        document.getElementById("record").value.trim();
+        document.getElementById(
+            "record"
+        ).value.trim();
 
     if(
         voornaam === "" ||
@@ -141,21 +189,36 @@ function addFighter(){
         gewicht === "" ||
         record === ""
     ){
-        alert("Vul alle velden in");
+        alert(
+            "Vul alle velden in"
+        );
         return;
     }
 
     fighters.push({
         naam:
-        voornaam + " " + achternaam,
+            voornaam +
+            " " +
+            achternaam,
         gewicht: gewicht,
         record: record
     });
 
-    document.getElementById("voornaam").value = "";
-    document.getElementById("achternaam").value = "";
-    document.getElementById("gewicht").value = "";
-    document.getElementById("record").value = "";
+    document.getElementById(
+        "voornaam"
+    ).value = "";
+
+    document.getElementById(
+        "achternaam"
+    ).value = "";
+
+    document.getElementById(
+        "gewicht"
+    ).value = "";
+
+    document.getElementById(
+        "record"
+    ).value = "";
 
     renderFighters();
     updateDropdowns();
@@ -164,13 +227,17 @@ function addFighter(){
 function renderFighters(){
 
     let box =
-        document.getElementById("fighterList");
+        document.getElementById(
+            "fighterList"
+        );
 
     box.innerHTML = "";
 
     if(fighters.length === 0){
+
         box.innerHTML =
-            "<div class='item'>Nog geen vechters</div>";
+        "Nog geen vechters";
+
         return;
     }
 
@@ -178,9 +245,14 @@ function renderFighters(){
 
         box.innerHTML +=
         "<div class='item'>" +
-        "<b>" + f.naam + "</b><br>" +
-        "Gewicht: " + f.gewicht + " kg<br>" +
-        "Record: " + f.record +
+        "<b>" +
+        f.naam +
+        "</b><br>" +
+        "Gewicht: " +
+        f.gewicht +
+        " kg<br>" +
+        "Record: " +
+        f.record +
         "</div>";
 
     });
@@ -189,59 +261,117 @@ function renderFighters(){
 function updateDropdowns(){
 
     let a =
-        document.getElementById("fighterA");
+        document.getElementById(
+            "fighterA"
+        );
 
     let b =
-        document.getElementById("fighterB");
+        document.getElementById(
+            "fighterB"
+        );
 
     a.innerHTML = "";
     b.innerHTML = "";
 
-    fighters.forEach(function(f,index){
+    fighters.forEach(function(
+        fighter,
+        index
+    ){
 
         let option1 =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
-        option1.value = index;
-        option1.text = f.naam;
+        option1.value =
+            index;
+
+        option1.text =
+            fighter.naam;
 
         let option2 =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
-        option2.value = index;
-        option2.text = f.naam;
+        option2.value =
+            index;
 
-        a.appendChild(option1);
-        b.appendChild(option2);
+        option2.text =
+            fighter.naam;
+
+        a.appendChild(
+            option1
+        );
+
+        b.appendChild(
+            option2
+        );
     });
 }
 
 function createMatch(){
 
     if(!admin){
-        alert("Alleen admin kan matches maken");
+
+        alert(
+            "Alleen admin kan wedstrijden maken"
+        );
+
         return;
     }
 
-    let fighterA =
-        document.getElementById("fighterA").value;
+    let a =
+        document.getElementById(
+            "fighterA"
+        ).value;
 
-    let fighterB =
-        document.getElementById("fighterB").value;
+    let b =
+        document.getElementById(
+            "fighterB"
+        ).value;
 
     let status =
-        document.getElementById("status").value;
+        document.getElementById(
+            "status"
+        ).value;
 
-    if(fighterA === fighterB){
-        alert("Kies twee verschillende vechters");
+    if(a === b){
+
+        alert(
+            "Kies twee verschillende vechters"
+        );
+
         return;
     }
 
     matches.push({
-        a: fighters[fighterA].naam,
-        b: fighters[fighterB].naam,
-        status: status
+        fighterA:
+            fighters[a].naam,
+        fighterB:
+            fighters[b].naam,
+        status:
+            status
     });
+
+    renderMatches();
+}
+
+function deleteMatch(index){
+
+    if(!admin){
+
+        alert(
+            "Alleen admin kan wedstrijden verwijderen"
+        );
+
+        return;
+    }
+
+    matches.splice(
+        index,
+        1
+    );
 
     renderMatches();
 }
@@ -249,27 +379,45 @@ function createMatch(){
 function renderMatches(){
 
     let box =
-        document.getElementById("matchList");
+        document.getElementById(
+            "matchList"
+        );
 
     box.innerHTML = "";
 
     if(matches.length === 0){
 
         box.innerHTML =
-        "<div class='item'>Nog geen wedstrijden</div>";
+        "Nog geen wedstrijden";
 
         return;
     }
 
-    matches.forEach(function(m){
+    matches.forEach(function(
+        match,
+        index
+    ){
 
         box.innerHTML +=
-        "<div class='item'>" +
-        "<b>" + m.a + "</b> VS <b>" +
-        m.b + "</b><br>" +
-        "Status: " + m.status +
-        "</div>";
 
+        "<div class='item'>" +
+
+        "<b>" +
+        match.fighterA +
+        "</b> VS <b>" +
+        match.fighterB +
+        "</b><br>" +
+
+        "Status: " +
+        match.status +
+
+        "<br><br>" +
+
+        "<button onclick='deleteMatch(" +
+        index +
+        ")'>❌ Verwijderen</button>" +
+
+        "</div>";
     });
 }
 
@@ -279,4 +427,3 @@ renderFighters();
 
 </body>
 </html>
-
