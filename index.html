@@ -6,58 +6,89 @@
 <title>Kickboxing Matchmaker</title>
 
 <style>
-body{
+*{
     margin:0;
-    padding:20px;
-    font-family:Arial,sans-serif;
-    background:#111;
-    color:white;
+    padding:0;
+    box-sizing:border-box;
 }
 
-h1{
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    background:linear-gradient(90deg,#dc2626,#ea580c);
+    padding:25px;
     text-align:center;
 }
 
-.card{
-    background:#222;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:15px;
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
 }
 
-input, select{
+.card{
+    background:#1e293b;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+h2{
+    margin-bottom:10px;
+}
+
+input,select{
     width:100%;
-    padding:10px;
-    margin:5px 0;
-    box-sizing:border-box;
+    padding:12px;
+    margin:6px 0;
+    border:none;
+    border-radius:8px;
 }
 
 button{
     width:100%;
-    padding:10px;
-    margin-top:5px;
-    background:#e53935;
-    color:white;
+    padding:12px;
     border:none;
-    border-radius:5px;
+    border-radius:8px;
     cursor:pointer;
+    font-weight:bold;
 }
 
-button:hover{
-    opacity:0.9;
+.red{
+    background:#dc2626;
+    color:white;
+}
+
+.green{
+    background:#16a34a;
+    color:white;
 }
 
 .item{
-    background:#333;
-    padding:10px;
+    background:#334155;
+    padding:12px;
+    border-radius:10px;
     margin-top:8px;
-    border-radius:5px;
+}
+
+.small-btn{
+    margin-top:8px;
 }
 </style>
 </head>
 <body>
 
-<h1>🥊 Kickboxing Matchmaker</h1>
+<header>
+    <h1>🥊 Kickboxing Matchmaker</h1>
+    <p>Admin beheert alle wedstrijden</p>
+</header>
+
+<div class="container">
 
 <div class="card">
     <h2>Admin Login</h2>
@@ -67,82 +98,105 @@ button:hover{
         id="adminPassword"
         placeholder="Admin wachtwoord">
 
-    <button onclick="loginAdmin()">
+    <button
+        class="green"
+        onclick="loginAdmin()">
         Login
     </button>
 
     <p id="loginStatus">
-        Niet ingelogd
+        ❌ Niet ingelogd
     </p>
 </div>
 
 <div class="card">
-    <h2>Trainer: Vechter toevoegen</h2>
+    <h2>Vechter toevoegen</h2>
 
-    <input id="voornaam" placeholder="Voornaam">
-
-    <input id="achternaam" placeholder="Achternaam">
+    <input
+        id="naam"
+        placeholder="Voornaam Achternaam">
 
     <input
         id="gewicht"
         type="number"
-        placeholder="Gewicht (kg)">
+        placeholder="Gewicht">
 
     <input
         id="record"
-        placeholder="Record (bijv. 8-2)">
+        placeholder="Record (8-2)">
 
-    <button onclick="addFighter()">
+    <button
+        class="red"
+        onclick="addFighter()">
         Vechter toevoegen
     </button>
 </div>
 
 <div class="card">
     <h2>Vechters</h2>
-    <div id="fighterList">
-        Nog geen vechters
-    </div>
+    <div id="fighterList"></div>
 </div>
 
 <div class="card">
-    <h2>Admin: Match maken</h2>
+    <h2>Match maken (Admin)</h2>
 
     <select id="fighterA"></select>
 
     <select id="fighterB"></select>
 
-    <select id="status">
+    <select id="matchStatus">
         <option>Gepland</option>
         <option>Bevestigd</option>
         <option>Geannuleerd</option>
     </select>
 
-    <button onclick="createMatch()">
-        Maak wedstrijd
+    <button
+        class="green"
+        onclick="createMatch()">
+        Maak Match
     </button>
 </div>
 
 <div class="card">
     <h2>Wedstrijden</h2>
-    <div id="matchList">
-        Nog geen wedstrijden
-    </div>
+    <div id="matchList"></div>
+</div>
+
 </div>
 
 <script>
 
 let admin = false;
 
-let fighters = [];
+let fighters =
+JSON.parse(
+localStorage.getItem("fighters")
+) || [];
 
-let matches = [];
+let matches =
+JSON.parse(
+localStorage.getItem("matches")
+) || [];
+
+function saveData(){
+
+    localStorage.setItem(
+        "fighters",
+        JSON.stringify(fighters)
+    );
+
+    localStorage.setItem(
+        "matches",
+        JSON.stringify(matches)
+    );
+}
 
 function loginAdmin(){
 
     let pass =
-        document.getElementById(
-            "adminPassword"
-        ).value;
+    document.getElementById(
+        "adminPassword"
+    ).value;
 
     if(pass === "admin123"){
 
@@ -163,29 +217,23 @@ function loginAdmin(){
 
 function addFighter(){
 
-    let voornaam =
-        document.getElementById(
-            "voornaam"
-        ).value.trim();
-
-    let achternaam =
-        document.getElementById(
-            "achternaam"
-        ).value.trim();
+    let naam =
+    document.getElementById(
+        "naam"
+    ).value.trim();
 
     let gewicht =
-        document.getElementById(
-            "gewicht"
-        ).value;
+    document.getElementById(
+        "gewicht"
+    ).value;
 
     let record =
-        document.getElementById(
-            "record"
-        ).value.trim();
+    document.getElementById(
+        "record"
+    ).value.trim();
 
     if(
-        voornaam === "" ||
-        achternaam === "" ||
+        naam === "" ||
         gewicht === "" ||
         record === ""
     ){
@@ -196,20 +244,18 @@ function addFighter(){
     }
 
     fighters.push({
-        naam:
-            voornaam +
-            " " +
-            achternaam,
-        gewicht: gewicht,
-        record: record
+        naam,
+        gewicht,
+        record
     });
 
-    document.getElementById(
-        "voornaam"
-    ).value = "";
+    saveData();
+
+    renderFighters();
+    updateSelects();
 
     document.getElementById(
-        "achternaam"
+        "naam"
     ).value = "";
 
     document.getElementById(
@@ -219,94 +265,99 @@ function addFighter(){
     document.getElementById(
         "record"
     ).value = "";
+}
+
+function deleteFighter(index){
+
+    if(!admin){
+        alert(
+        "Alleen admin kan verwijderen"
+        );
+        return;
+    }
+
+    fighters.splice(index,1);
+
+    saveData();
 
     renderFighters();
-    updateDropdowns();
+    updateSelects();
 }
 
 function renderFighters(){
 
     let box =
-        document.getElementById(
-            "fighterList"
-        );
+    document.getElementById(
+        "fighterList"
+    );
 
     box.innerHTML = "";
 
     if(fighters.length === 0){
 
         box.innerHTML =
-        "Nog geen vechters";
+        "<div class='item'>Nog geen vechters</div>";
 
         return;
     }
 
-    fighters.forEach(function(f){
+    fighters.forEach(
+    function(f,index){
 
         box.innerHTML +=
+
         "<div class='item'>" +
+
         "<b>" +
         f.naam +
         "</b><br>" +
+
         "Gewicht: " +
         f.gewicht +
         " kg<br>" +
+
         "Record: " +
         f.record +
-        "</div>";
 
+        "<br><button class='small-btn red' onclick='deleteFighter(" +
+        index +
+        ")'>Verwijderen</button>" +
+
+        "</div>";
     });
 }
 
-function updateDropdowns(){
+function updateSelects(){
 
     let a =
-        document.getElementById(
-            "fighterA"
-        );
+    document.getElementById(
+        "fighterA"
+    );
 
     let b =
-        document.getElementById(
-            "fighterB"
-        );
+    document.getElementById(
+        "fighterB"
+    );
 
     a.innerHTML = "";
     b.innerHTML = "";
 
-    fighters.forEach(function(
-        fighter,
-        index
-    ){
+    fighters.forEach(
+    function(f,index){
 
-        let option1 =
-            document.createElement(
-                "option"
-            );
+        a.innerHTML +=
+        "<option value='" +
+        index +
+        "'>" +
+        f.naam +
+        "</option>";
 
-        option1.value =
-            index;
-
-        option1.text =
-            fighter.naam;
-
-        let option2 =
-            document.createElement(
-                "option"
-            );
-
-        option2.value =
-            index;
-
-        option2.text =
-            fighter.naam;
-
-        a.appendChild(
-            option1
-        );
-
-        b.appendChild(
-            option2
-        );
+        b.innerHTML +=
+        "<option value='" +
+        index +
+        "'>" +
+        f.naam +
+        "</option>";
     });
 }
 
@@ -315,44 +366,49 @@ function createMatch(){
     if(!admin){
 
         alert(
-            "Alleen admin kan wedstrijden maken"
+        "Log eerst in als admin"
         );
 
         return;
     }
 
     let a =
-        document.getElementById(
-            "fighterA"
-        ).value;
+    document.getElementById(
+        "fighterA"
+    ).value;
 
     let b =
-        document.getElementById(
-            "fighterB"
-        ).value;
+    document.getElementById(
+        "fighterB"
+    ).value;
 
     let status =
-        document.getElementById(
-            "status"
-        ).value;
+    document.getElementById(
+        "matchStatus"
+    ).value;
 
     if(a === b){
 
         alert(
-            "Kies twee verschillende vechters"
+        "Kies twee verschillende vechters"
         );
 
         return;
     }
 
     matches.push({
+
         fighterA:
-            fighters[a].naam,
+        fighters[a].naam,
+
         fighterB:
-            fighters[b].naam,
+        fighters[b].naam,
+
         status:
-            status
+        status
     });
+
+    saveData();
 
     renderMatches();
 }
@@ -362,16 +418,15 @@ function deleteMatch(index){
     if(!admin){
 
         alert(
-            "Alleen admin kan wedstrijden verwijderen"
+        "Alleen admin"
         );
 
         return;
     }
 
-    matches.splice(
-        index,
-        1
-    );
+    matches.splice(index,1);
+
+    saveData();
 
     renderMatches();
 }
@@ -379,49 +434,47 @@ function deleteMatch(index){
 function renderMatches(){
 
     let box =
-        document.getElementById(
-            "matchList"
-        );
+    document.getElementById(
+        "matchList"
+    );
 
     box.innerHTML = "";
 
     if(matches.length === 0){
 
         box.innerHTML =
-        "Nog geen wedstrijden";
+        "<div class='item'>Nog geen wedstrijden</div>";
 
         return;
     }
 
-    matches.forEach(function(
-        match,
-        index
-    ){
+    matches.forEach(
+    function(m,index){
 
         box.innerHTML +=
 
         "<div class='item'>" +
 
         "<b>" +
-        match.fighterA +
+        m.fighterA +
         "</b> VS <b>" +
-        match.fighterB +
+        m.fighterB +
         "</b><br>" +
 
         "Status: " +
-        match.status +
+        m.status +
 
-        "<br><br>" +
-
-        "<button onclick='deleteMatch(" +
+        "<br><button class='small-btn red' onclick='deleteMatch(" +
         index +
-        ")'>❌ Verwijderen</button>" +
+        ")'>Wedstrijd verwijderen</button>" +
 
         "</div>";
     });
 }
 
 renderFighters();
+renderMatches();
+updateSelects();
 
 </script>
 
