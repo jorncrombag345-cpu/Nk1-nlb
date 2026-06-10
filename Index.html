@@ -3,35 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <title>Kickboxing Matchmaker</title>
+
 <style>
 body{
-font-family:Arial;
-max-width:800px;
-margin:auto;
-padding:20px;
+    font-family: Arial;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
 }
+
 button{
-padding:10px;
-background:black;
-color:white;
-border:none;
+    padding: 10px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+input{
+    padding: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.fighter{
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
 }
 </style>
 </head>
+
 <body>
 
 <h1>Kickboxing Matchmaker</h1>
-
 <p>Zoek tegenstanders voor jouw gala of vechter.</p>
 
 <h2>Vechter aanmelden</h2>
 
-<form>
-<input type="text" placeholder="Naam"><br><br>
-<input type="text" placeholder="Gewichtsklasse"><br><br>
-<input type="text" placeholder="Record"><br><br>
-<button>Versturen</button>
+<form id="fighterForm">
+    <input type="text" placeholder="Naam" id="naam" required>
+    <input type="text" placeholder="Gewichtsklasse" id="gewicht" required>
+    <input type="text" placeholder="Record (bijv. 3-1)" id="record" required>
+    <button type="submit">Versturen</button>
 </form>
 
-</body>
-</html>
+<h2>Aangemelde vechters</h2>
+<div id="lijst"></div>
+
+<script>
+// opslag laden of lege array maken
+let fighters = JSON.parse(localStorage.getItem("fighters")) || [];
+
+// tonen op pagina
+function renderFighters() {
+    const lijst = document.getElementById("lijst");
+    lijst.innerHTML = "";
+
+    fighters.forEach((f, index) => {
+        lijst.innerHTML += `
+            <div class="fighter">
+                <strong>${f.naam}</strong><br
