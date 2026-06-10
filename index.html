@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kickboxing Matchmaker</title>
+<title>Kickboxing Matchmaker (Admin)</title>
 
 <style>
 body{
@@ -15,12 +15,12 @@ body{
 
 header{
     text-align:center;
-    padding:30px;
+    padding:25px;
     background:#1a1a1a;
 }
 
 .container{
-    max-width:800px;
+    max-width:900px;
     margin:auto;
     padding:20px;
 }
@@ -45,13 +45,21 @@ button{
     border:none;
     color:white;
     cursor:pointer;
+    margin-top:5px;
 }
 
-.match{
+.list-item, .match-item{
     padding:8px;
     margin-top:5px;
     background:#2a2a2a;
     border-radius:5px;
+}
+
+.admin-box{
+    background:#2b1a1a;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:10px;
 }
 </style>
 </head>
@@ -60,19 +68,41 @@ button{
 
 <header>
     <h1>Kickboxing Matchmaker</h1>
+    <p>Trainers voegen vechters toe • Admin maakt matches</p>
 </header>
 
 <div class="container">
 
+    <!-- ADMIN LOGIN SIMPEL -->
+    <div class="card admin-box">
+        <h3>Admin toegang</h3>
+        <input id="adminPass" type="password" placeholder="Admin wachtwoord">
+        <button onclick="checkAdmin()">Login</button>
+        <p id="adminStatus">Niet ingelogd</p>
+    </div>
+
+    <!-- ADD FIGHTER -->
     <div class="card">
-        <h3>Voeg vechter toe</h3>
-        <input id="name" placeholder="Naam">
-        <input id="weight" type="number" placeholder="Gewicht">
+        <h3>Trainer: Voeg vechter toe</h3>
+
+        <input id="firstName" placeholder="Voornaam">
+        <input id="lastName" placeholder="Achternaam">
+        <input id="weight" type="number" placeholder="Gewicht (kg)">
+        <input id="record" placeholder="Record (bijv. 5-1)">
+
         <button onclick="addFighter()">Toevoegen</button>
     </div>
 
+    <!-- FIGHTERS -->
     <div class="card">
-        <h3>Matches</h3>
+        <h3>Vechters</h3>
+        <div id="fighters">Nog geen vechters</div>
+    </div>
+
+    <!-- ADMIN MATCH BUTTON -->
+    <div class="card">
+        <h3>Matches (alleen admin)</h3>
+        <button onclick="createMatches()">Maak matches</button>
         <div id="matches">Nog geen matches</div>
     </div>
 
@@ -80,57 +110,18 @@ button{
 
 <script>
 let fighters = [];
+let matches = [];
+let isAdmin = false;
 
-function addFighter(){
-    let name = document.getElementById("name").value;
-    let weight = document.getElementById("weight").value;
+function checkAdmin(){
+    let pass = document.getElementById("adminPass").value;
 
-    if(name === "" || weight === ""){
-        alert("Vul alles in!");
-        return;
-    }
-
-    fighters.push({
-        name: name,
-        weight: parseFloat(weight)
-    });
-
-    document.getElementById("name").value = "";
-    document.getElementById("weight").value = "";
-
-    updateMatches();
-}
-
-function updateMatches(){
-    let output = document.getElementById("matches");
-    output.innerHTML = "";
-
-    let found = false;
-
-    for(let i=0;i<fighters.length;i++){
-        for(let j=i+1;j<fighters.length;j++){
-
-            let diff = Math.abs(fighters[i].weight - fighters[j].weight);
-
-            if(diff <= 3){
-                found = true;
-
-                let div = document.createElement("div");
-                div.className = "match";
-                div.innerHTML =
-                    fighters[i].name + " vs " + fighters[j].name +
-                    " (" + diff + "kg verschil)";
-
-                output.appendChild(div);
-            }
-        }
-    }
-
-    if(!found){
-        output.innerHTML = "Nog geen matches";
+    if(pass === "admin123"){
+        isAdmin = true;
+        document.getElementById("adminStatus").innerText = "Admin ingelogd ✅";
+    } else {
+        alert("Fout wachtwoord");
     }
 }
-</script>
 
-</body>
-</html>
+function addF
