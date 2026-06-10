@@ -3,125 +3,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kickboxing Matchmaker (Admin)</title>
+<title>Kickboxing Matchmaker</title>
 
 <style>
 body{
-    margin:0;
-    font-family: Arial;
-    background:#0f0f0f;
+    font-family: Arial, sans-serif;
+    background:#111;
     color:white;
-}
-
-header{
-    text-align:center;
-    padding:25px;
-    background:#1a1a1a;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
+    margin:0;
     padding:20px;
 }
 
+h1{
+    text-align:center;
+}
+
 .card{
-    background:#1c1c1c;
+    background:#222;
     padding:15px;
-    margin-bottom:15px;
     border-radius:10px;
+    margin-bottom:15px;
 }
 
 input{
     width:100%;
     padding:10px;
     margin:5px 0;
+    box-sizing:border-box;
 }
 
 button{
     width:100%;
     padding:10px;
-    background:red;
-    border:none;
+    background:#e53935;
     color:white;
-    cursor:pointer;
-    margin-top:5px;
-}
-
-.list-item, .match-item{
-    padding:8px;
-    margin-top:5px;
-    background:#2a2a2a;
+    border:none;
     border-radius:5px;
+    cursor:pointer;
 }
 
-.admin-box{
-    background:#2b1a1a;
+button:hover{
+    opacity:0.9;
+}
+
+.item{
+    background:#333;
     padding:10px;
-    border-radius:10px;
-    margin-bottom:10px;
+    margin-top:5px;
+    border-radius:5px;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-    <h1>Kickboxing Matchmaker</h1>
-    <p>Trainers voegen vechters toe • Admin maakt matches</p>
-</header>
+<h1>🥊 Kickboxing Matchmaker</h1>
 
-<div class="container">
+<div class="card">
+    <h2>Admin Login</h2>
+    <input type="password" id="password" placeholder="Wachtwoord">
+    <button onclick="login()">Login</button>
+    <p id="status">Niet ingelogd</p>
+</div>
 
-    <!-- ADMIN LOGIN SIMPEL -->
-    <div class="card admin-box">
-        <h3>Admin toegang</h3>
-        <input id="adminPass" type="password" placeholder="Admin wachtwoord">
-        <button onclick="checkAdmin()">Login</button>
-        <p id="adminStatus">Niet ingelogd</p>
-    </div>
+<div class="card">
+    <h2>Trainer: Voeg vechter toe</h2>
 
-    <!-- ADD FIGHTER -->
-    <div class="card">
-        <h3>Trainer: Voeg vechter toe</h3>
+    <input type="text" id="voornaam" placeholder="Voornaam">
+    <input type="text" id="achternaam" placeholder="Achternaam">
+    <input type="number" id="gewicht" placeholder="Gewicht (kg)">
+    <input type="text" id="record" placeholder="Record (bijv. 8-2)">
 
-        <input id="firstName" placeholder="Voornaam">
-        <input id="lastName" placeholder="Achternaam">
-        <input id="weight" type="number" placeholder="Gewicht (kg)">
-        <input id="record" placeholder="Record (bijv. 5-1)">
+    <button onclick="addFighter()">Vechter toevoegen</button>
+</div>
 
-        <button onclick="addFighter()">Toevoegen</button>
-    </div>
+<div class="card">
+    <h2>Vechters</h2>
+    <div id="fighters"></div>
+</div>
 
-    <!-- FIGHTERS -->
-    <div class="card">
-        <h3>Vechters</h3>
-        <div id="fighters">Nog geen vechters</div>
-    </div>
-
-    <!-- ADMIN MATCH BUTTON -->
-    <div class="card">
-        <h3>Matches (alleen admin)</h3>
-        <button onclick="createMatches()">Maak matches</button>
-        <div id="matches">Nog geen matches</div>
-    </div>
-
+<div class="card">
+    <h2>Matches (alleen admin)</h2>
+    <button onclick="makeMatches()">Maak Matches</button>
+    <div id="matches"></div>
 </div>
 
 <script>
 let fighters = [];
-let matches = [];
-let isAdmin = false;
+let admin = false;
 
-function checkAdmin(){
-    let pass = document.getElementById("adminPass").value;
+function login(){
+    const pass = document.getElementById("password").value;
 
     if(pass === "admin123"){
-        isAdmin = true;
-        document.getElementById("adminStatus").innerText = "Admin ingelogd ✅";
-    } else {
-        alert("Fout wachtwoord");
+        admin = true;
+        document.getElementById("status").innerText =
+            "✅ Ingelogd als admin";
+    }else{
+        alert("Verkeerd wachtwoord");
     }
 }
 
-function addF
+function addFighter(){
+
+    const voornaam =
+        document.getElementById("voornaam").value.trim();
+
+    const achternaam =
+        document.getElementById("achternaam").value.trim();
+
+    const gewicht =
+        parseFloat(document.getElementById("gewicht").value);
+
+    const record =
+        document.getElementById("record").value.trim();
+
+    if(
+        voornaam === "" ||
+        achternaam === "" ||
+        isNaN(gewicht) ||
+        record === ""
+    ){
+        alert("Vul alle velden in");
+        return;
+    }
+
+    fighters.push({
+        voornaam,
+        achternaam,
+        gewicht,
+        record
+    });
+
+    renderFighters();
+
+    document.getElementById("voornaam").value = "";
+    document.getElementById("achternaam").value = "";
+    document.getElementById("gewicht").value = "";
+    document.getElementById("record").value = "";
+}
+
+function renderFighters(){
+
+    const container =
+        document.getElementById("fighters");
+
+    container.innerHTML = "";
+
+    if(fighters.length === 0){
+        container.innerHTML =
+            "<div class='item'>Nog geen vechters</div>";
+        return;
+    }
+
+    fighters.forEach(f => {
+
+        const div = document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML =
+            "<b>" + f.voornaam + " " + f.achternaam + "</b><br>" +
+            "Gewicht: " + f.gewicht + " kg<br>" +
+            "Record: " + f.record;
+
+        container.appendChild(div);
+    });
+}
+
+function makeMatches(){
+
+    if(!admin){
+        alert("Alleen admin kan matches maken");
+        return;
+    }
+
+    const container =
+        document.getElementById("matches");
+
+    container.innerHTML = "";
+
+    let found = false;
+
+    for(let i=0;i<fighters.length;i++){
+
+        for(let j=i+1;j<fighters.length;j++){
+
+            const verschil =
+                Math.abs(
+                    fighters[i].gewicht -
+                    fighters[j].gewicht
+                );
+
+            if(verschil <= 3){
+
+                found = true;
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "item";
+
+                div.innerHTML =
+                    fighters[i].voornaam +
+                    " " +
+                    fighters[i].achternaam +
+                    " VS " +
+                    fighters[j].voornaam +
+                    " " +
+                    fighters[j].achternaam +
+                    " (" +
+                    verschil +
+                    " kg verschil)";
+
+                container.appendChild(div);
+            }
+        }
+    }
+
+    if(!found){
+        container.innerHTML =
+            "<div class='item'>Geen geschikte matches gevonden</div>";
+    }
+}
+
+renderFighters();
+</script>
+
+</body>
+</html>
+
+
