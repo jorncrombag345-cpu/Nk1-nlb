@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kickboxing Matchmaker</title>
+<title>🥊 Kickboxing Matchmaker Pro</title>
 
 <style>
 *{
@@ -16,25 +16,24 @@ body{
     font-family:Arial,sans-serif;
     background:#0f172a;
     color:white;
-    min-height:100vh;
 }
 
 header{
-    background:linear-gradient(90deg,#dc2626,#ea580c);
-    padding:25px;
     text-align:center;
+    padding:30px;
+    background:linear-gradient(90deg,#dc2626,#ea580c);
 }
 
 .container{
-    max-width:1100px;
+    max-width:1200px;
     margin:auto;
     padding:20px;
 }
 
 .card{
     background:#1e293b;
-    border-radius:15px;
     padding:20px;
+    border-radius:15px;
     margin-bottom:20px;
 }
 
@@ -45,14 +44,15 @@ h2{
 input,select{
     width:100%;
     padding:12px;
-    margin:6px 0;
     border:none;
     border-radius:8px;
+    margin-top:8px;
 }
 
 button{
     width:100%;
     padding:12px;
+    margin-top:10px;
     border:none;
     border-radius:8px;
     cursor:pointer;
@@ -73,19 +73,23 @@ button{
     background:#334155;
     padding:12px;
     border-radius:10px;
-    margin-top:8px;
+    margin-top:10px;
 }
 
-.small-btn{
-    margin-top:8px;
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:6px;
+    background:#475569;
+    margin-top:5px;
 }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>🥊 Kickboxing Matchmaker</h1>
-    <p>Admin beheert alle wedstrijden</p>
+    <h1>🥊 Kickboxing Matchmaker Pro</h1>
+    <p>Coach registratie & handmatige matchmaking</p>
 </header>
 
 <div class="container">
@@ -104,47 +108,58 @@ button{
         Login
     </button>
 
-    <p id="loginStatus">
+    <p id="adminStatus">
         ❌ Niet ingelogd
     </p>
 </div>
 
 <div class="card">
-    <h2>Vechter toevoegen</h2>
+    <h2>Coach: Vechter toevoegen</h2>
 
-    <input
-        id="naam"
-        placeholder="Voornaam Achternaam">
+    <input id="coach" placeholder="Coach / Gym">
 
-    <input
-        id="gewicht"
-        type="number"
-        placeholder="Gewicht">
+    <input id="voornaam" placeholder="Voornaam">
 
-    <input
-        id="record"
-        placeholder="Record (8-2)">
+    <input id="achternaam" placeholder="Achternaam">
+
+    <input id="leeftijd" type="number" placeholder="Leeftijd">
+
+    <input id="gewicht" type="number" placeholder="Gewicht (kg)">
+
+    <input id="record" placeholder="Record (bijv. 8-2)">
+
+    <input id="partijen" type="number" placeholder="Aantal partijen">
+
+    <select id="klasse">
+        <option>J-Klasse</option>
+        <option>D-Klasse</option>
+        <option>C-Klasse</option>
+        <option>B-Klasse</option>
+        <option>A-Klasse</option>
+        <option>N-Klasse</option>
+        <option>Pro Klasse</option>
+    </select>
 
     <button
         class="red"
         onclick="addFighter()">
-        Vechter toevoegen
+        Voeg Vechter Toe
     </button>
 </div>
 
 <div class="card">
-    <h2>Vechters</h2>
+    <h2>Alle Vechters</h2>
     <div id="fighterList"></div>
 </div>
 
 <div class="card">
-    <h2>Match maken (Admin)</h2>
+    <h2>Admin: Maak Match</h2>
 
     <select id="fighterA"></select>
 
     <select id="fighterB"></select>
 
-    <select id="matchStatus">
+    <select id="wedstrijdStatus">
         <option>Gepland</option>
         <option>Bevestigd</option>
         <option>Geannuleerd</option>
@@ -153,7 +168,7 @@ button{
     <button
         class="green"
         onclick="createMatch()">
-        Maak Match
+        Maak Wedstrijd
     </button>
 </div>
 
@@ -169,14 +184,10 @@ button{
 let admin = false;
 
 let fighters =
-JSON.parse(
-localStorage.getItem("fighters")
-) || [];
+JSON.parse(localStorage.getItem("fighters")) || [];
 
 let matches =
-JSON.parse(
-localStorage.getItem("matches")
-) || [];
+JSON.parse(localStorage.getItem("matches")) || [];
 
 function saveData(){
 
@@ -203,9 +214,9 @@ function loginAdmin(){
         admin = true;
 
         document.getElementById(
-            "loginStatus"
+            "adminStatus"
         ).innerHTML =
-        "✅ Admin ingelogd";
+        "✅ Admin Ingelogd";
 
     }else{
 
@@ -217,61 +228,87 @@ function loginAdmin(){
 
 function addFighter(){
 
-    let naam =
-    document.getElementById(
-        "naam"
-    ).value.trim();
+    let coach =
+    document.getElementById("coach").value;
+
+    let voornaam =
+    document.getElementById("voornaam").value;
+
+    let achternaam =
+    document.getElementById("achternaam").value;
+
+    let leeftijd =
+    document.getElementById("leeftijd").value;
 
     let gewicht =
-    document.getElementById(
-        "gewicht"
-    ).value;
+    document.getElementById("gewicht").value;
 
     let record =
-    document.getElementById(
-        "record"
-    ).value.trim();
+    document.getElementById("record").value;
+
+    let partijen =
+    document.getElementById("partijen").value;
+
+    let klasse =
+    document.getElementById("klasse").value;
 
     if(
-        naam === "" ||
+        coach === "" ||
+        voornaam === "" ||
+        achternaam === "" ||
+        leeftijd === "" ||
         gewicht === "" ||
-        record === ""
+        record === "" ||
+        partijen === ""
     ){
-        alert(
-            "Vul alle velden in"
-        );
+        alert("Vul alles in");
         return;
     }
 
     fighters.push({
-        naam,
+
+        coach: coach,
+
+        naam:
+        voornaam +
+        " " +
+        achternaam,
+
+        leeftijd:
+        leeftijd,
+
+        gewicht:
         gewicht,
-        record
+
+        record:
+        record,
+
+        partijen:
+        partijen,
+
+        klasse:
+        klasse
     });
 
     saveData();
 
     renderFighters();
-    updateSelects();
+    updateDropdowns();
 
-    document.getElementById(
-        "naam"
-    ).value = "";
-
-    document.getElementById(
-        "gewicht"
-    ).value = "";
-
-    document.getElementById(
-        "record"
-    ).value = "";
+    document.querySelectorAll(
+        "input"
+    ).forEach(function(i){
+        if(i.type !== "password"){
+            i.value = "";
+        }
+    });
 }
 
 function deleteFighter(index){
 
     if(!admin){
         alert(
-        "Alleen admin kan verwijderen"
+            "Alleen admin"
         );
         return;
     }
@@ -281,7 +318,7 @@ function deleteFighter(index){
     saveData();
 
     renderFighters();
-    updateSelects();
+    updateDropdowns();
 }
 
 function renderFighters(){
@@ -301,25 +338,43 @@ function renderFighters(){
         return;
     }
 
-    fighters.forEach(
-    function(f,index){
+    fighters.forEach(function(f,index){
 
         box.innerHTML +=
 
         "<div class='item'>" +
 
-        "<b>" +
+        "<h3>" +
         f.naam +
-        "</b><br>" +
+        "</h3>" +
 
-        "Gewicht: " +
+        "<p>Coach: " +
+        f.coach +
+        "</p>" +
+
+        "<p>Leeftijd: " +
+        f.leeftijd +
+        "</p>" +
+
+        "<p>Gewicht: " +
         f.gewicht +
-        " kg<br>" +
+        " kg</p>" +
 
-        "Record: " +
+        "<p>Record: " +
         f.record +
+        "</p>" +
 
-        "<br><button class='small-btn red' onclick='deleteFighter(" +
+        "<p>Partijen: " +
+        f.partijen +
+        "</p>" +
+
+        "<span class='badge'>" +
+        f.klasse +
+        "</span>" +
+
+        "<br><br>" +
+
+        "<button class='red' onclick='deleteFighter(" +
         index +
         ")'>Verwijderen</button>" +
 
@@ -327,7 +382,7 @@ function renderFighters(){
     });
 }
 
-function updateSelects(){
+function updateDropdowns(){
 
     let a =
     document.getElementById(
@@ -342,14 +397,15 @@ function updateSelects(){
     a.innerHTML = "";
     b.innerHTML = "";
 
-    fighters.forEach(
-    function(f,index){
+    fighters.forEach(function(f,index){
 
         a.innerHTML +=
         "<option value='" +
         index +
         "'>" +
         f.naam +
+        " | " +
+        f.klasse +
         "</option>";
 
         b.innerHTML +=
@@ -357,6 +413,8 @@ function updateSelects(){
         index +
         "'>" +
         f.naam +
+        " | " +
+        f.klasse +
         "</option>";
     });
 }
@@ -366,7 +424,7 @@ function createMatch(){
     if(!admin){
 
         alert(
-        "Log eerst in als admin"
+            "Log eerst in als admin"
         );
 
         return;
@@ -382,19 +440,19 @@ function createMatch(){
         "fighterB"
     ).value;
 
-    let status =
-    document.getElementById(
-        "matchStatus"
-    ).value;
-
     if(a === b){
 
         alert(
-        "Kies twee verschillende vechters"
+            "Kies twee verschillende vechters"
         );
 
         return;
     }
+
+    let status =
+    document.getElementById(
+        "wedstrijdStatus"
+    ).value;
 
     matches.push({
 
@@ -403,6 +461,9 @@ function createMatch(){
 
         fighterB:
         fighters[b].naam,
+
+        klasse:
+        fighters[a].klasse,
 
         status:
         status
@@ -418,7 +479,7 @@ function deleteMatch(index){
     if(!admin){
 
         alert(
-        "Alleen admin"
+            "Alleen admin"
         );
 
         return;
@@ -448,25 +509,29 @@ function renderMatches(){
         return;
     }
 
-    matches.forEach(
-    function(m,index){
+    matches.forEach(function(m,index){
 
         box.innerHTML +=
 
         "<div class='item'>" +
 
-        "<b>" +
+        "<h3>" +
         m.fighterA +
-        "</b> VS <b>" +
+        " VS " +
         m.fighterB +
-        "</b><br>" +
+        "</h3>" +
 
-        "Status: " +
+        "<p>Klasse: " +
+        m.klasse +
+        "</p>" +
+
+        "<p>Status: " +
         m.status +
+        "</p>" +
 
-        "<br><button class='small-btn red' onclick='deleteMatch(" +
+        "<button class='red' onclick='deleteMatch(" +
         index +
-        ")'>Wedstrijd verwijderen</button>" +
+        ")'>Wedstrijd Verwijderen</button>" +
 
         "</div>";
     });
@@ -474,7 +539,7 @@ function renderMatches(){
 
 renderFighters();
 renderMatches();
-updateSelects();
+updateDropdowns();
 
 </script>
 
